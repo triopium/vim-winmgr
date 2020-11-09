@@ -2,16 +2,23 @@
 "1. Rename window
 "2. Kill by pid
 "mark for killing (special column or syntax highligh)
-"3. Cycle window by cursor and move window_manager with it
+"3. Cycle window by cursor
+"a) move window_manager with it
+"b) show quickview
+"screenshot: main, scrot
+"maim ~/Pictures/$(date +%s).png
+"
 "4. Move window to desktop (increasing,decreasing the desktop number)
 "xdotool get_num_desktops
 "set_desktop_for_window [window_ID] desktop_number-1
 "5. Select windows for actions
+"6. Set starting position when using more than one display
+"7. translucent background
 
 "Rename started window manager window
 silent !wmctrl -r :ACTIVE: -T window_manager
 
-"vimwmctrl#ActivateWindow activate window under cursor
+"vimwmctrl#ActivateWindow activate window under cursor by enter
 function! vimwmctrl#ActivateWindow()
 	let l:curline=getline('.')
 	let l:sp=split(l:curline,'\t\t\t\t')
@@ -41,11 +48,14 @@ function vimwmctrl#MakeList()
 	"Select and format fields
 	"let l:cmdc=" | awk -F '\t' '{gsub(\".*\\.\", \"\" ,$4); printf \"\%2d \%5d \%s \\\"%s\\\" \\n\",$2,$3,$4,$6}'"
 	let l:cmdc=" | awk -F '\t' '{gsub(\".*\\.\", \"\" ,$4); printf \"\%2d \%5d \%s \\\"%s\\\" \t\t\t\t\%s \\n\",$2,$3,$4,$6,$1}'"
+	lef l:cmdf1=" | perl -e 'print "hello world!\n"'"
 	"Run the command and put output to list
 	let l:cmdo=systemlist(l:cmda .  l:cmdb . l:cmdc)
 	set nowrap
 	0put=l:cmdo
-	2,$! sort
+	:1d
+	1,$! sort
+	:1d
 
 	"Color the output
 	syn match programtype "\(^..\s\+\S\+\)\zs.*" contains=pname
